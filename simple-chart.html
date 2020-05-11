@@ -25,6 +25,21 @@
         .chart__legend {
             fill: white;
         }
+
+        .chart__grid line {
+            stroke: lightgrey;
+            stroke-opacity: 0.5;
+            shape-rendering: crispEdges;
+        }
+
+        .chart__grid path {
+            stroke: lightgrey;
+            stroke-opacity: 0.5;
+        }
+
+.grid path {
+  stroke-width: 0;
+}
     </style>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Faker/3.1.0/faker.min.js"></script>
@@ -67,6 +82,17 @@
             y: d3.axisLeft().scale(scale.y)
         }
 
+        const gridline = {
+            x: (ticks = 5) => axis.x.ticks(ticks),
+            y: (ticks = 5) => axis.y.ticks(ticks)
+        }
+
+        function make_y_gridlines() {		
+            return d3
+                .axisLeft(scale.y)
+                .ticks(5)
+        }
+
         const legend = d3
             .legendColor()
             .shapeWidth(40)
@@ -99,14 +125,28 @@
 
         svg
             .append('g')
+            .attrs({ transform: 'translate(30 40)' })
+            .attrs({ class: 'chart__grid' })
+            .call( gridline.y().tickSize(40 - width).tickFormat("") )
+
+        svg
+            .append('g')
+            .attrs({ transform: 'translate(40 30)' })
+            .attrs({ class: 'chart__grid' })
+            .call( gridline.x().tickSize(40 - width).tickFormat("") )
+
+        svg
+            .append('g')
             .attrs({ transform: 'translate(30 520)' })
             .attrs({ class: 'chart__legend' })
             .call(legend)
 
-        document.querySelectorAll('.label').forEach(element => {
-            element.innerHTML = element.innerHTML.match(/[0-9]+/)[0]
-            element.style.fontSize = 14
-        })
+        document
+            .querySelectorAll('.label')
+            .forEach(element => {
+                element.innerHTML = element.innerHTML.match(/[0-9]+/)[0]
+                element.style.fontSize = 14
+            })
         
         const circles = svg
             .append('g')
